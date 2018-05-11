@@ -1,0 +1,87 @@
+#include <sys/mman.h>
+#include <sys/stat.h> /* for mode constants */
+#include <fcntl.h>    /* for O_* constants */
+
+########################################################
+shm_open(const char* name, int oflag, mode_t mode);
+########################################################
+Creates and opens a new, or opens an existing, POSIX
+shared memory object.
+
+Params:
+name -> specifies the shared memory object 
+        null-terminated string, of up to NAME_MAX 255 chars
+        starts with / with no other characters being /
+oflag -> Combination of 1 RDONLY/RDWR and any other flag
+         O_RDONLY: read access
+         O_RDWR: read-write access
+         O_CREAT: Create smo if doesn't exist
+         O_EXCL: If O_CREAT was also specified, and the name already
+            exists, return error
+        O_TRUNC: If the smo already exists, truncate it to zero bytes
+mode -> ??
+
+returns:
+success: nonnegative file descriptor
+failure: -1
+########################################################
+ 
+
+########################################################
+shm_unlink(const char* name);
+########################################################
+Removes an object previously created by shm_open();
+
+Params:
+name -> specifies the shared memory object 
+        null-terminated string, of up to NAME_MAX 255 chars
+        starts with / with no other characters being /
+
+returns:
+success: 0
+failure: -1
+########################################################
+
+
+########################################################
+Mode constants
+########################################################
+S_IRWXU 00700   user rwx
+S_IRUSR 00400   user r
+S_IWUSR 00200   user w
+S_IXUSR 00100   user x
+S_IRWXG 00070   group rwx
+S_IRGRP 00040   group r
+S_IWGRP 00020   group w
+S_IXGRP 00010   group x
+S_IRWXO 00007   other rwx
+S_IROTH 00004   other r
+S_IWOTH 00002   other w 
+S_IXOTH 00001   other x
+########################################################
+
+########################################################
+mmap(void* addr, size_t length, int prot, int flags,
+    int fd, off_t offset;);
+########################################################
+Creates a new mapping in the virtual address space of the
+calling process. The starting address for the new mapping
+is specified in addr.   The length argument specifies the
+length of the mapping (>0).
+
+params:
+addr -> If NULL kernel chooses address
+length -> length of mapping
+prot -> memory protection of the mapping
+        PROT_NONE: Pages may not be accessed
+        PROT_EXEC: Pages may be executed
+        PROT_READ: Pages may be read 
+        PROT_WRITE: Pages may be written 
+flags -> determines whether updates to the mapping are visible to
+            other processes mapping the same region.
+         MAP_SHARED: Updates are visible to other processes
+         MAP_SHARED_VALIDATE: same as MAP_SHARED
+         MAP_PRIVATE: Updates are not visible
+fd -> address
+offset -> offset in file
+########################################################
