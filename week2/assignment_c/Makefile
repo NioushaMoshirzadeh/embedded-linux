@@ -4,14 +4,14 @@ LDFLAGS = -lusb-1.0
 
 .PHONY: all upload
 
-all: helloArgv
+all: helloArgv.o helloArgv 
 
 helloArgv.o: helloArgv.c
-	gcc -c -o helloArgv.o helloArgv.c $(LDFLAGS)
+	$(CC) -c -o helloArgv.o helloArgv.c $(LDFLAGS)
 	@echo Compiled: HelloArgv.c \>\> helloArgv.o
 
 helloArgv: helloArgv.o
-	gcc -o helloArgv helloArgv.o $(LDFLAGS)
+	$(CC) -o helloArgv helloArgv.o $(LDFLAGS)
 	@echo Linked: helloArgv.o  \>\> helloArgv
 
 upload:
