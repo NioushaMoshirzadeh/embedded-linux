@@ -7,21 +7,33 @@
 #include <unistd.h>
 #include "delay.h"
 
-static int shm_fd = -1;
+/*###################################################################*/
+
+/* file descriptor */
+int shm_fd = -1;
+
+/*###################################################################*/
 
 /* Open shared memory object for r-w  returns address*/
 char* my_shm_open(char* shm_name);
+
+/*###################################################################*/
 
 int main()
 {
     printf("Program B:\n");
 
-    char* shm_addr = (char*) MAP_FAILED;
-    char* filename = "/test"; 
+    char* shm_addr = (char*) MAP_FAILED; // create empty addr
+    char* filename = "/test";            // file name
 
     printf("Opening file..\n");
-    shm_addr = my_shm_open(filename);
+    shm_addr = my_shm_open(filename); // open file
 
+    /*
+     * Check if the first letter of the file is a lowercase a
+     * if it is change it to an uppercase A
+     * end program
+     */
     do
     {
         printf("Polling..\n");
@@ -33,11 +45,13 @@ int main()
     printf("Found 'a', changing to 'A'\n");
     shm_addr[0] = 'A';
 
-    close(shm_fd);
+    close(shm_fd); 
     
     printf("Program end");
     return 0;
 }
+
+/*###################################################################*/
 
 char* my_shm_open (char* shm_name)
 {

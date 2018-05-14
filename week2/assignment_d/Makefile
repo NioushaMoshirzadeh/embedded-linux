@@ -30,7 +30,7 @@ progB.o: progB.c
 
 # Link program B
 progB: progB.o delay.o
-	$(CC) $^ -o $(DIR_LOCAL)$@ $(FLAGS)
+	$(CC) $(DIR_LOCAL)progB.o $(DIR_LOCAL)delay.o -o $(DIR_LOCAL)$@ $(FLAGS)
 
 clean:
 	rm -rf $(DIR_LOCAL)*.o progA progB

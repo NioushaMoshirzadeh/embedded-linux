@@ -7,39 +7,47 @@
 #include <unistd.h>
 #include "delay.h"
 
-/* Start and end of lowercase alphabet in ascii table */
+/*###################################################################*/
+
+/* Start lowercase alphabet in ascii table */
 #define LOWER_CASE_START 97
-#define LOWER_CASE_END 122
 /* File size 26 for each letter of the alphabet */
 #define FILE_SIZE 26
 
-static int shm_fd = -1;
+/*###################################################################*/
 
-/* fill array with lower case letters of the alphabet */
-void createAlphabet(char* a);
+/* File descriptor */
+int shm_fd = -1;
+
+/*###################################################################*/
+
 
 /* Create new shared memory object returns address*/
 char* my_shm_create(char* shm_name, int size);
+
+/*###################################################################*/
 
 int main()
 {
     printf("Program A:\n");
 
-    char* shm_addr = (char*) MAP_FAILED;
-    char alphabet[FILE_SIZE]; 
-    createAlphabet(alphabet);
-
-    char* fileName = "/test";
+    char* shm_addr = (char*) MAP_FAILED; // Create empty shm_addr
+    char* fileName = "/test";            // file name
 
     printf("Creating file..\n");
-    shm_addr = my_shm_create(fileName, FILE_SIZE); 
+    shm_addr = my_shm_create(fileName, FILE_SIZE);  // create file
     
+    /* Fill file with alphabet in lowercase */
     printf("Writing data to file..\n");
     for (int i=0; i<FILE_SIZE; i++)
     {
-        shm_addr[i] = alphabet[i];
+        shm_addr[i] = LOWER_CASE_START + i;
     }
 
+    /* 
+     * If the first letter of the file is an uppercase A
+     * remove the file
+     */
     while (shm_addr[0] != 'A')
     {
         printf("Polling..\n");
@@ -48,26 +56,18 @@ int main()
     }
 
     printf("Found 'A', closing file..\n");
-    shm_unlink(fileName);
+    shm_unlink(fileName); // remove file
 
     printf("End program\n");
     return 0;
 }
 
-void createAlphabet(char* a)
-{
-    int index=0;
-    for(int i=LOWER_CASE_START; i<=LOWER_CASE_END; i++)
-    {
-        a[index] = i;
-        index++;
-    }
-}
+/*###################################################################*/
 
 char * my_shm_create(char * shm_name, int size)
 {
-    int     rtnval;
-    char*   shm_addr;
+    int     rtnval; // return value for truncate function
+    char*   shm_addr; // file address
     
     /*
      * create shared memory object
