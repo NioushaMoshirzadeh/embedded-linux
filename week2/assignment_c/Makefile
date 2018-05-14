@@ -4,7 +4,7 @@ LDFLAGS = -lusb-1.0
 
 .PHONY: all upload
 
-all: helloArgv.o helloArgv 
+all: helloArgv 
 
 helloArgv.o: helloArgv.c
 	$(CC) -c -o helloArgv.o helloArgv.c $(LDFLAGS)
