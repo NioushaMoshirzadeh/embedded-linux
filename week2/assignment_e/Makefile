@@ -5,28 +5,28 @@ ACC = arm-linux-gcc
 FLAGS = -Wall -Werror -lrt
 DIR_LOCAL=builds/local/
 DIR_TARGET=builds/target/
-
 ####################################################################
 
-all: $(TARGET)
+all: $(DIR_LOCAL)$(TARGET) $(DIR_LOCAL)$(TARGET)
 	
-# Compile
-$(TARGET).o: $(TARGET).c
-	$(CC) -c $^ -o $(DIR_LOCAL)$@ $(FLAGS)
-	$(ACC) -c $^ -o $(DIR_TARGET)$@ $(FLAGS)
+# LOCAL
+$(DIR_LOCAL)$(TARGET).o: $(TARGET).c
+	$(CC) -c $^ -o $@ $(FLAGS)
+$(DIR_LOCAL)$(TARGET): $(DIR_LOCAL)$(TARGET).o
+	$(CC) $^ -o $@ $(FLAGS)
 
-# Link
-$(TARGET): $(TARGET).o
-	$(CC) $(DIR_LOCAL)$(TARGET).o -o $(DIR_LOCAL)$@ $(FLAGS)
-	$(ACC) $(DIR_TARGET)$(TARGET).o -o $(DIR_TARGET)$@ $(FLAGS)
+# TARGET
+$(DIR_TARGET)$(TARGET).o: $(TARGET).c
+	$(ACC) -c $^ -o $@ $(FLAGS)
+$(DIR_TARGET)$(TARGET): $(DIR_TARGET)$(TARGET).o
+	$(ACC) $^ -o $@ $(FLAGS)
 
-# upload to device as root @10.0.0.4
+# upload to device as root@10.0.0.4
 upload:
-	sshpass -p 'root' scp helloArgv root@10.0.0.4:~
+	sshpass -p 'root' scp $(DIR_TARGET)$(TARGET) root@10.0.0.4:~
 
 clean:
 	rm -rf $(DIR_LOCAL)* $(DIR_TARGET)*
 
 ####################################################################
-
 .PHONY: all upload clean
