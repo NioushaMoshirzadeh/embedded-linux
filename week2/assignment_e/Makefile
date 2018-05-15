@@ -1,5 +1,5 @@
 ####################################################################
-TARGET=
+TARGET=hello
 CC = gcc
 ACC = arm-linux-gcc
 FLAGS = -Wall -Werror -lrt
@@ -7,7 +7,7 @@ DIR_LOCAL=builds/local/
 DIR_TARGET=builds/target/
 ####################################################################
 
-all: $(DIR_LOCAL)$(TARGET) $(DIR_LOCAL)$(TARGET)
+all: $(DIR_LOCAL)$(TARGET) $(DIR_TARGET)$(TARGET)
 	
 # LOCAL
 $(DIR_LOCAL)$(TARGET).o: $(TARGET).c
