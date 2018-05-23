@@ -9,7 +9,8 @@ int
 main(int argc, char *argv[])
 {
 	libusb_device_handle *h;
-	unsigned char data[] = { 1, 3, 0x0a };
+	//unsigned char data[] = { 1, 3, 0x0a };
+    unsigned char data[] = { 00, 8, 00, 99, 99, 00, 00, 00 };
 	int error, transferred;
 
 	libusb_init(NULL);
