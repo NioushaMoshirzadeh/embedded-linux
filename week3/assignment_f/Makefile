@@ -11,15 +11,15 @@ all: $(DIR_LOCAL)$(TARGET) $(DIR_TARGET)$(TARGET)
 	
 # LOCAL
 $(DIR_LOCAL)$(TARGET).o: $(TARGET).c
-	$(CC) -c $^ -o $@ $(FLAGS)
+	$(CC) -c $^  -o $@ $(FLAGS)
 $(DIR_LOCAL)$(TARGET): $(DIR_LOCAL)$(TARGET).o
-	$(CC) $^ -o $@ $(FLAGS)
+	$(CC) $^  -o $@ $(FLAGS)
 
 # TARGET
 $(DIR_TARGET)$(TARGET).o: $(TARGET).c
-	$(ACC) -c $^ -o $@ $(FLAGS)
+	$(ACC) -c $^  -o $@ $(FLAGS)
 $(DIR_TARGET)$(TARGET): $(DIR_TARGET)$(TARGET).o
-	$(ACC) $^ -o $@ $(FLAGS)
+	$(ACC) $^  -o $@ $(FLAGS)
 
 # upload to device as root@10.0.0.4
 upload:
