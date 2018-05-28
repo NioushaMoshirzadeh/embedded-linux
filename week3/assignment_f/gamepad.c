@@ -95,10 +95,18 @@ void ShowInput()
     printf("\n");
 
     printf("Triggers & sticks\n");
-    printf("\tLeft trigger: \t%d\n", INPUT[4]);
+    printf("\ttLeft trigger: \t%d\n", INPUT[4]);
     printf("\tRight trigger: \t%d\n", INPUT[5]);
-    printf("\tLeft stick x: \t%d\n", INPUT[6]);
-    printf("\tLeft stick y: \t%d\n", INPUT[8]);
-    printf("\tRight stick x: \t%d\n", INPUT[10]);
-    printf("\tRight stick y: \t%d\n", INPUT[12]);
+
+    Show2ByteOutput("Left stick x", &INPUT[6], &INPUT[7]);
+    Show2ByteOutput("Left stick y", &INPUT[8], &INPUT[9]);
+    Show2ByteOutput("Right stick x", &INPUT[10], &INPUT[11]);
+    Show2ByteOutput("Right stick y", &INPUT[12], &INPUT[13]);
+}
+
+void Show2ByteOutput(char* msg, unsigned char* msb, unsigned char* lsb)
+{
+    signed char b1 = (signed char) *msb;
+    signed char b2 = (signed char) *lsb;
+    printf("\t%s: \t0x%08x 0x%08x\n", msg, b2 , b1);
 }

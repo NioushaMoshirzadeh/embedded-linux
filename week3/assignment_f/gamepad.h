@@ -103,4 +103,6 @@ void HandleTrigger(libusb_device_handle* h, TRIGGER* trigger, SEQUENCE* seq);
  */
 void ShowInput();
 
+void Show2ByteOutput(char* msg, unsigned char* msb, unsigned char* lsb);
+
 /*###################################################################*/
