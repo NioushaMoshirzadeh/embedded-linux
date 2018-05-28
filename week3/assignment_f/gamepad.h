@@ -103,6 +103,9 @@ void HandleTrigger(libusb_device_handle* h, TRIGGER* trigger, SEQUENCE* seq);
  */
 void ShowInput();
 
+/*
+ * Print 2 byte values as seperate bytes (hexadecimal, lsb first)
+ */
 void Show2ByteOutput(char* msg, unsigned char* msb, unsigned char* lsb);
 
 /*###################################################################*/
