@@ -1,3 +1,5 @@
+#define VID 0x045e  // Vendor ID
+#define PID 0x028e  // Product ID
 #define IN  0x81    // message type for INPUT
 #define OUT 0x02    // message type for OUTPUT
 
@@ -94,7 +96,7 @@ SEQUENCE LED    = {3, 5, 0, {LED_ALL_ON, LED_ON_ONE, LED_ON_TWO,
 /*
  * Checks inputs for any triggers, and executes sequence for trigger
  */
-void HandleTrigger(libusb_device_handle* h, TRIGGER* trigger, SEQUENCE* seq)
+void HandleTrigger(libusb_device_handle* h, TRIGGER* trigger, SEQUENCE* seq);
 
 /*
  * Print all buttons being pressed to the Cli

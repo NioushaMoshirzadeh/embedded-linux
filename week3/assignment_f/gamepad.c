@@ -10,8 +10,8 @@ int main(int argc, char *argv[])
 
 	libusb_init(NULL);              // init libusb library
 
-    /* attempt to open xbox controller connection , exit on error */
-	h = libusb_open_device_with_vid_pid(NULL, 0x045e, 0x028e);
+    /* attempt to open xbox controller connection , return on error */
+	h = libusb_open_device_with_vid_pid(NULL, VID, PID);
 	if (h == NULL) {
 		fprintf(stderr, "Failed to open device\n");
 		return (1);
