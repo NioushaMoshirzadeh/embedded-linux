@@ -95,8 +95,8 @@ void ShowInput()
     printf("\n");
 
     printf("Triggers & sticks\n");
-    printf("\ttLeft trigger: \t%d\n", INPUT[4]);
-    printf("\tRight trigger: \t%d\n", INPUT[5]);
+    printf("\tLeft trigger: \t0x%02x\n", INPUT[4]);
+    printf("\tRight trigger: \t0x%02x\n", INPUT[5]);
 
     Show2ByteOutput("Left stick x", &INPUT[6], &INPUT[7]);
     Show2ByteOutput("Left stick y", &INPUT[8], &INPUT[9]);
