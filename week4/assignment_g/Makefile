@@ -34,15 +34,15 @@ LOCAL_LIBS=$(DIR_LOCAL)Auxiliary.o\
 
 # target
 $(DIR_TARGET)Auxiliary.o: $(DIR_LIB)Auxiliary.c
-	$(CC) -c $^ -o $@ $(FLAGS)
+	$(ACC) -c $^ -o $@ $(FLAGS)
 $(DIR_TARGET)CreateTCPClientSocket.o: $(DIR_LIB)CreateTCPClientSocket.c
-	$(CC) -c $^ -o $@ $(FLAGS)
+	$(ACC) -c $^ -o $@ $(FLAGS)
 $(DIR_TARGET)CreateTCPServerSocket.o: $(DIR_LIB)CreateTCPServerSocket.c
-	$(CC) -c $^ -o $@ $(FLAGS)
+	$(ACC) -c $^ -o $@ $(FLAGS)
 $(DIR_TARGET)AcceptTCPConnection.o: $(DIR_LIB)AcceptTCPConnection.c
-	$(CC) -c $^ -o $@ $(FLAGS)
+	$(ACC) -c $^ -o $@ $(FLAGS)
 $(DIR_TARGET)HandleTCPClient.o: $(DIR_LIB)HandleTCPClient.c
-	$(CC) -c $^ -o $@ $(FLAGS)
+	$(ACC) -c $^ -o $@ $(FLAGS)
 
 TARGET_LIBS=$(DIR_TARGET)Auxiliary.o\
             $(DIR_TARGET)CreateTCPClientSocket.o\

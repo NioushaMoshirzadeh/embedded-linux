@@ -28,7 +28,7 @@ void HandleTCPClient (int clntSocket)
     while (recvMsgSize > 0)      /* zero indicates end of transmission */
     {
         /* Print the received message */
-        printf("Received message: %s\n");
+        printf("Received message: %s\n", echoBuffer);
         
         /* Convert chars from upper->lower case and vice versa */
         for (int i=0; i<recvMsgSize; i++)

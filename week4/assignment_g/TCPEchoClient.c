@@ -25,7 +25,7 @@ int main (int argc, char *argv[])
     for (i = 0; i < argv_nrofdata; i++)
     {
         echoString = argv_data [i];
-        echoStringLen = strlen (echoString) + 1;          
+        echoStringLen = strlen (echoString) + 1;    // Add 1 to string length to include \0
         /* Determine input length */
 
         delaying();
@@ -36,15 +36,9 @@ int main (int argc, char *argv[])
         /* Display transmitted string in verbose mode */
         info_s("Sent string", echoString);
         
-        // TODO: add code to receive & display the converted string from the server
+        /* Display receive and converted string from server */
         bytesRcvd = recv(sock, echoBuffer, RCVBUFSIZE, 0);
         printf("Received bytes: %d\nReceived message: %s\n", bytesRcvd, echoBuffer);
-        //for (int i=0; i<bytesRcvd; i++)
-        //{
-            //printf("%c", echoBuffer[i]);
-        //}
-        //printf("\n");
-        
     }
 
     delaying ();
