@@ -36,7 +36,7 @@ int main (int argc, char *argv[])
     while (running == 1)
     {
         printf("Enter message: ");
-        fgets(message, 250, stdin);
+        fgets(message, 256, stdin);
 
         /* Remove trailing newline character */
         if ((strlen(message) > 0) && (message[strlen(message) -1] == '\n'))
@@ -56,7 +56,7 @@ int main (int argc, char *argv[])
             printf("%c[2K", 27); // clear current lin in console
             printf("You: %s\n", message);
             send(sock, message, strlen(message) + 1, 0);
-            recv(sock, message, 250, 0);
+            recv(sock, message, 32, 0);
             printf("Other: %s\n", message);
         }
     }

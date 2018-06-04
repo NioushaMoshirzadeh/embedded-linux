@@ -88,7 +88,8 @@ info_set_local_peer (int sock)
         printf ("sock:\n");
         printf ("    family: %d\n", a.sin_family);
         printf ("    addr:   %s\n", inet_ntoa(a.sin_addr));
-        printf ("    port:   %d\n", ntohl (a.sin_port));
+        printf ("    port:   %d\n", ntohs (a.sin_port));
+        printf ("    port:   %x\n", ntohs (a.sin_port));
     }
     
     sprintf (local_prefix, "LOCAL %s(%05d)", inet_ntoa(a.sin_addr), ntohl (a.sin_port));
@@ -104,7 +105,8 @@ info_set_local_peer (int sock)
         printf ("peer:\n");
         printf ("    family: %d\n", a.sin_family);
         printf ("    addr:   %s\n", inet_ntoa(a.sin_addr));
-        printf ("    port:   %d\n", ntohl (a.sin_port));
+        printf ("    port:   %d\n", ntohs (a.sin_port));
+        printf ("    port:   %x\n", ntohs (a.sin_port));
     }
     
     sprintf (peer_prefix, "PEER  %s(%05d)", inet_ntoa(a.sin_addr), ntohl (a.sin_port));

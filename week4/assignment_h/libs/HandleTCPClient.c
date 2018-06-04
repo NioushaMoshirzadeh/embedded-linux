@@ -23,16 +23,16 @@ void HandleTCPClient (int clntSocket)
     char echoBuffer[RCVBUFSIZE];        /* Buffer for echo string */
     int  recvMsgSize;                   /* Size of received message */
     int running = 1;
-    char message[250];
+    char message[256];
 
     printf("\e[1;1H\e[2J"); // clear console window
-    printf("%s\n", chatroom_welcome);
+    printf("%s\n", chatroom_welcome); // print chatroom msg at top
     while (running == 1)
     {
-       recv(clntSocket, message, 250, 0); 
-       printf("Client: %s\n", message);
-       printf("Enter Message: ");
-       fgets(message, 250, stdin);
+       recv(clntSocket, message, 32, 0);  // get msg from client
+       printf("Client: %s\n", message); // show msg
+       printf("Enter Message: "); // enter server msg
+       fgets(message, 256, stdin);
         
         /* Remove trailing newline character */
         if ((strlen(message) > 0) && (message[strlen(message) -1] == '\n'))
@@ -48,8 +48,8 @@ void HandleTCPClient (int clntSocket)
         }
         else
         {
-            printf("\033[1A");
-            printf("%c[2K", 27);
+            printf("\033[1A"); // move up 1 line in console
+            printf("%c[2K", 27); // clear current line in console
             printf("Server: %s\n", message);
             send(clntSocket, message, strlen(message) + 1, 0);
         }
