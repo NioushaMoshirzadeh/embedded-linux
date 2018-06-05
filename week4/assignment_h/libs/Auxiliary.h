@@ -1,6 +1,8 @@
 #ifndef _AUXILIARY_H_
 #define _AUXILIARY_H_
 
+#define MAX_MSG_SIZE 8 * 32 /* 32 byte max message size, so 256 */
+
 #include <stdbool.h>    /* for bool,true,false */
 
 extern char *           argv_ip;
@@ -27,5 +29,7 @@ extern void info_set_output (const char * name);
 extern void info_set_local_peer (int sock);
 extern char * remove_nl (char * s);
 extern void parse_args (int argc, char * argv[]);
+
+extern char* chatroom_welcome;
 
 #endif

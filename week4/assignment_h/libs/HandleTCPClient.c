@@ -8,29 +8,31 @@
 #include "Auxiliary.h"
 #include "HandleTCPClient.h"
 
-#define RCVBUFSIZE 250   /* Size of receive buffer */
-char* chatroom_welcome =
-"#########################################################\n"
-"#                                                       #\n"
-"#                       Chat room                       #\n"
-"#                                                       #\n"
-"#########################################################\n";
-
 void HandleTCPClient (int clntSocket)
 {
-    // 'clntSocket' is obtained from AcceptTCPConnection()
-
-    char echoBuffer[RCVBUFSIZE];        /* Buffer for echo string */
-    int  recvMsgSize;                   /* Size of received message */
     int running = 1;
     char message[256];
 
+    /* Clear window and show chatroom welcome message */
     printf("\e[1;1H\e[2J"); // clear console window
     printf("%s\n", chatroom_welcome); // print chatroom msg at top
+
+    /*
+     * Main program loop
+     */
     while (running == 1)
     {
-       recv(clntSocket, message, 32, 0);  // get msg from client
-       printf("Client: %s\n", message); // show msg
+       /* Get message from client */
+       if (recv(clntSocket, message, 32, 0) == -1)
+       {
+           printf("ERROR RECEIVING MESSAGE\n");
+       }
+       else
+       {
+           printf("Client: %s\n", message);
+       }
+
+       /* Get user input */
        printf("Enter Message: "); // enter server msg
        fgets(message, 256, stdin);
         
@@ -40,6 +42,7 @@ void HandleTCPClient (int clntSocket)
             message[strlen(message) -1 ] = '\0';
         }
 
+        /* if quit end program */
         if (strcmp(message, "quit") == 0)
         {
             printf("Quitting.. \n");
@@ -48,22 +51,19 @@ void HandleTCPClient (int clntSocket)
         }
         else
         {
+            /* Send input to client */
             printf("\033[1A"); // move up 1 line in console
             printf("%c[2K", 27); // clear current line in console
-            printf("Server: %s\n", message);
-            send(clntSocket, message, strlen(message) + 1, 0);
+            if (send(clntSocket, message, strlen(message) + 1, 0) == -1)
+            {
+                printf("ERROR SENDING MESSAGE\n");
+            }
+            else
+            {
+                printf("Server: %s\n", message);
+            }
         }
     }
     close (clntSocket);    /* Close client socket */
     info ("close");
-
-    /* Receive message from client */
-    recvMsgSize = recv (clntSocket, echoBuffer, RCVBUFSIZE-1, 0);
-    if (recvMsgSize < 0)
-    {
-        DieWithError ("recv() failed");
-    }
-    info_d ("Recv", recvMsgSize);
-
-
 }
