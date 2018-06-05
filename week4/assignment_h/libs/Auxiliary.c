@@ -28,6 +28,13 @@ static FILE *   tty_fptr = NULL;
 static char     local_prefix [80] = { '\0' };
 static char     peer_prefix [80]  = { '\0' };
 
+char* chatroom_welcome =
+"#########################################################\n"
+"#                                                       #\n"
+"#                       Chat room                       #\n"
+"#                                                       #\n"
+"#########################################################\n";
+
 void
 delaying (void)
 {
