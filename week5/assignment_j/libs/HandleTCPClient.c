@@ -9,10 +9,8 @@
 
 #define RCVBUFSIZE 32   /* Size of receive buffer */
 
-void HandleTCPClient (int clntSocket)
+void HandleTCPClient (int clntSocket, int thread)
 {
-    // 'clntSocket' is obtained from AcceptTCPConnection()
-
     char echoBuffer[RCVBUFSIZE];        /* Buffer for echo string */
     int  recvMsgSize;                   /* Size of received message */
 
@@ -28,7 +26,7 @@ void HandleTCPClient (int clntSocket)
     while (recvMsgSize > 0)      /* zero indicates end of transmission */
     {
         /* Print the received message */
-        printf("Received message: %s\n", echoBuffer);
+        printf("#%d Received message: %s\n", thread, echoBuffer);
         
         /* Convert chars from upper->lower case and vice versa */
         for (int i=0; i<recvMsgSize; i++)
