@@ -2,13 +2,17 @@
 
 int main()
 {
+    /* numbers to print */
     int numbers[3] = {1, 3, 5};
 
+    /* Open or create shm file */
     connect();
 
+    /* Set terminal */
     tty_fd = open(tty_name, O_RDWR);
 
 
+    /* print every number to terminal */
     for (int i=0; i<3; i++)
     {
         claimShm();
