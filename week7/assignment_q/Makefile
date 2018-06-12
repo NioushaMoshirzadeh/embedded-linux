@@ -1,20 +1,22 @@
 ####################################################################
-CLIENT=TCPEchoClient
-SERVER=TCPEchoServer
+CLIENT=client
+SERVER=server
 CC = gcc
 ACC = arm-linux-gcc
-FLAGS = -Wall -Werror -pthread
+FLAGS = -Wall -Werror -lrt -lusb-1.0
 DIR_LOCAL=builds/local/
 DIR_TARGET=builds/target/
 DIR_LIB=libs/
 ####################################################################
 
-all: $(DIR_LOCAL)$(CLIENT) $(DIR_LOCAL)$(SERVER) $(DIR_TARGET)$(CLIENT) $(DIR_TARGET)$(SERVER)
+all: $(DIR_LOCAL)$(CLIENT) $(DIR_LOCAL)$(SERVER) $(DIR_TARGET)$(SERVER)
 	
 ####################################################################
 #   LIBRARIES                                                      #
 ####################################################################
 # local
+$(DIR_LOCAL)xboxHandler.o: $(DIR_LIB)xboxHandler.c
+	$(CC) -c $^ -o $@ $(FLAGS)
 $(DIR_LOCAL)Auxiliary.o: $(DIR_LIB)Auxiliary.c
 	$(CC) -c $^ -o $@ $(FLAGS)
 $(DIR_LOCAL)CreateTCPClientSocket.o: $(DIR_LIB)CreateTCPClientSocket.c
@@ -26,13 +28,16 @@ $(DIR_LOCAL)AcceptTCPConnection.o: $(DIR_LIB)AcceptTCPConnection.c
 $(DIR_LOCAL)HandleTCPClient.o: $(DIR_LIB)HandleTCPClient.c
 	$(CC) -c $^ -o $@ $(FLAGS)
 
-LOCAL_LIBS=$(DIR_LOCAL)Auxiliary.o\
+LOCAL_LIBS=$(DIR_LOCAL)xboxHandler.o\
+           $(DIR_LOCAL)Auxiliary.o\
            $(DIR_LOCAL)CreateTCPClientSocket.o\
            $(DIR_LOCAL)CreateTCPServerSocket.o\
            $(DIR_LOCAL)AcceptTCPConnection.o\
            $(DIR_LOCAL)HandleTCPClient.o\
 
 # target
+$(DIR_TARGET)xboxHandler.o: $(DIR_LIB)xboxHandler.c
+	$(ACC) -c $^ -o $@ $(FLAGS)
 $(DIR_TARGET)Auxiliary.o: $(DIR_LIB)Auxiliary.c
 	$(ACC) -c $^ -o $@ $(FLAGS)
 $(DIR_TARGET)CreateTCPClientSocket.o: $(DIR_LIB)CreateTCPClientSocket.c
@@ -44,7 +49,8 @@ $(DIR_TARGET)AcceptTCPConnection.o: $(DIR_LIB)AcceptTCPConnection.c
 $(DIR_TARGET)HandleTCPClient.o: $(DIR_LIB)HandleTCPClient.c
 	$(ACC) -c $^ -o $@ $(FLAGS)
 
-TARGET_LIBS=$(DIR_TARGET)Auxiliary.o\
+TARGET_LIBS=$(DIR_TARGET)xboxHandler.o\
+            $(DIR_TARGET)Auxiliary.o\
             $(DIR_TARGET)CreateTCPClientSocket.o\
             $(DIR_TARGET)CreateTCPServerSocket.o\
             $(DIR_TARGET)AcceptTCPConnection.o\
@@ -64,10 +70,6 @@ $(DIR_LOCAL)$(SERVER): $(DIR_LOCAL)$(SERVER).o $(LOCAL_LIBS)
 	$(CC) $^ -o $@ $(FLAGS)
 
 # target
-$(DIR_TARGET)$(CLIENT).o: $(CLIENT).c
-	$(ACC) -c $^ -o $@ $(FLAGS)
-$(DIR_TARGET)$(CLIENT): $(DIR_TARGET)$(CLIENT).o $(TARGET_LIBS)
-	$(ACC) $^ -o $@ $(FLAGS)
 $(DIR_TARGET)$(SERVER).o: $(SERVER).c
 	$(ACC) -c $^ -o $@ $(FLAGS)
 $(DIR_TARGET)$(SERVER): $(DIR_TARGET)$(SERVER).o $(TARGET_LIBS)
@@ -75,7 +77,6 @@ $(DIR_TARGET)$(SERVER): $(DIR_TARGET)$(SERVER).o $(TARGET_LIBS)
 
 # upload to device as root@10.0.0.4
 upload:
-	sshpass -p 'root' scp $(DIR_TARGET)$(CLIENT) root@10.0.0.4:~
 	sshpass -p 'root' scp $(DIR_TARGET)$(SERVER) root@10.0.0.4:~
 
 clean:
