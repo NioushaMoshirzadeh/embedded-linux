@@ -15,8 +15,8 @@ all: $(DIR_LOCAL)$(CLIENT) $(DIR_LOCAL)$(SERVER) $(DIR_TARGET)$(SERVER)
 #   LIBRARIES                                                      #
 ####################################################################
 # local
-$(DIR_LOCAL)xboxHandler.o: $(DIR_LIB)xboxHandler.c
-	$(CC) -c $^ -o $@ $(FLAGS)
+$(DIR_LOCAL)xboxHandler.o:$(DIR_LIB)xboxHandler.c $(DIR_LIB)xboxHandler.h
+	$(CC) -c $(DIR_LIB)xboxHandler.c -o $@ $(FLAGS)
 $(DIR_LOCAL)Auxiliary.o: $(DIR_LIB)Auxiliary.c
 	$(CC) -c $^ -o $@ $(FLAGS)
 $(DIR_LOCAL)CreateTCPClientSocket.o: $(DIR_LIB)CreateTCPClientSocket.c

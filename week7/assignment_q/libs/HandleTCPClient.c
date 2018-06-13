@@ -1,39 +1,28 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <ctype.h>      // for isupper() etc.
 #include <sys/socket.h> // for send() and recv()
 #include <unistd.h>     // for sleep(), close()
 #include <semaphore.h>
 
-//#include <libusb-1.0/libusb.h>
 #include "xboxHandler.h"
 #include "Auxiliary.h"
 #include "HandleTCPClient.h"
 
-#define RCVBUFSIZE 32   /* Size of receive buffer */
+#define RCVBUFSIZE 256   /* Size of receive buffer */
 
-unsigned char BTN_INPUTS[34] = {0, 34, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-unsigned char RUMBLE_ON[8]   = {0, 8, 0, 0x88, 0x88, 0, 0, 0};
-unsigned char RUMBLE_OFF[8]  = {0, 8, 0, 0x00, 0x00, 0, 0, 0}; 
-unsigned char LED_ALL_ON[3]  = {0x01, 0x03, 0x01};
-unsigned char LED_ALL_OFF[3] = {0x01, 0x03, 0x00};
+
+void GenerateOutputMessage();
 
 void HandleTCPClient (int clntSocket, sem_t* sem)
 {
     // 'clntSocket' is obtained from AcceptTCPConnection()
 
-    char echoBuffer[RCVBUFSIZE];        /* Buffer for echo string */
+    char echoBuffer[RCVBUFSIZE ];        /* Buffer for echo string */
     int  recvMsgSize;                   /* Size of received message */
     libusb_device_handle* h = NULL;
 
-    if (h == NULL)
-    {
-        printf("Error connecting to device\n");
-    }
-    else
-    {
-        printf("Connected to device\n");
-    }
     /* Receive message from client */
     recvMsgSize = recv (clntSocket, echoBuffer, RCVBUFSIZE-1, 0);
     if (recvMsgSize < 0)
@@ -48,6 +37,14 @@ void HandleTCPClient (int clntSocket, sem_t* sem)
         info("Waiting..");
         sem_wait(sem);
         h = openDevice();
+        if (h == NULL)
+        {
+            printf("Error connecting to device\n");
+        }
+        else
+        {
+            printf("Connected to device\n");
+        }
         /* Print the received message */
         printf("Received message: %s\n", echoBuffer);
         
@@ -69,6 +66,10 @@ void HandleTCPClient (int clntSocket, sem_t* sem)
                 printf("Got 4\n"); 
                 sendCommand(h, LED_ALL_OFF, 8);
                 break;
+            case '5':
+                printf("Got 5\n");
+                getInput(h);
+                GenerateOutputMessage(echoBuffer);
             default:
                 break;
         }
@@ -101,4 +102,47 @@ void HandleTCPClient (int clntSocket, sem_t* sem)
 
     close (clntSocket);    /* Close client socket */
     info ("close");
+}
+
+void GenerateOutputMessage(char* output)
+{
+    output[0] = '\0';
+    for (int i=0; i<2; i++)
+    {
+        for (int j=0; j<button_inputs[i]->number_of_bits; j++)
+        {
+            if ((BTN_INPUTS[button_inputs[i]->input_index] & (1<<button_inputs[i]->relevant_bits[j])) != 0)
+            {
+                strcat(output, button_inputs[i]->buttons[j]);
+                printf("cat: '%s'\n", output);
+            }
+        }
+    }
+
+    /*
+    //printf("\tLeft trigger: \t0x%02x\n", INPUT[4]);
+    strcat(output, "LT: ");
+    strcat(output, BTN_INPUTS[4]);
+    //printf("\tRight trigger: \t0x%02x\n", BTN_INPUTS[5]);
+    strcat(output, "RT: ");
+    strcat(output, BTN_INPUTS[5]);
+
+    //Show2ByteOutput("Left stick x", &BTN_INPUTS[6], &BTN_INPUTS[7]);
+    strcat(output, "LSX: ");
+    strcat(output, BTN_INPUTS[6]);
+    strcat(output, BTN_INPUTS[7]);
+    //Show2ByteOutput("Left stick y", &BTN_INPUTS[8], &BTN_INPUTS[9]);
+    strcat(output, "LSY: ");
+    strcat(output, BTN_INPUTS[8]);
+    strcat(output, BTN_INPUTS[9]);
+    //Show2ByteOutput("Right stick x", &BTN_INPUTS[10], &BTN_INPUTS[11]);
+    strcat(output, "RSX: ");
+    strcat(output, BTN_INPUTS[10]);
+    strcat(output, BTN_INPUTS[11]);
+    //Show2ByteOutput("Right stick y", &BTN_INPUTS[12], &BTN_INPUTS[13]);
+    strcat(output, "RSY: ");
+    strcat(output, BTN_INPUTS[12]);
+    strcat(output, BTN_INPUTS[13]);
+    */
+
 }
