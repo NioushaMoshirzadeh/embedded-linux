@@ -79,8 +79,9 @@ void HandleTCPClient (int clntSocket, sem_t* sem)
         libusb_close(h);
         delaying ();
         
+        printf("sizeof(echoBuffer): %ld\n", (long)sizeof(echoBuffer));
         /* Echo message back to client */
-        if (send (clntSocket, echoBuffer, recvMsgSize, 0) != recvMsgSize)
+        if (send (clntSocket, echoBuffer, RCVBUFSIZE, 0) != RCVBUFSIZE)
         {
             DieWithError ("send() failed");
         }
@@ -106,6 +107,10 @@ void HandleTCPClient (int clntSocket, sem_t* sem)
 
 void GenerateOutputMessage(char* output)
 {
+    int stick_indexes[] = {6, 7, 8, 9, 10, 11, 12, 13};
+    char** labels = {"LSX: ", "LSY: ", "RSX: ", "RSY: "};
+    char tmp_string[8];
+
     output[0] = '\0';
     for (int i=0; i<2; i++)
     {
@@ -118,31 +123,55 @@ void GenerateOutputMessage(char* output)
             }
         }
     }
+    
 
-    /*
-    //printf("\tLeft trigger: \t0x%02x\n", INPUT[4]);
-    strcat(output, "LT: ");
-    strcat(output, BTN_INPUTS[4]);
-    //printf("\tRight trigger: \t0x%02x\n", BTN_INPUTS[5]);
-    strcat(output, "RT: ");
-    strcat(output, BTN_INPUTS[5]);
+    strcat(output, " LT: ");
+    sprintf(tmp_string, "0x%02x ", BTN_INPUTS[4]);
+    strcat(output, tmp_string);
 
-    //Show2ByteOutput("Left stick x", &BTN_INPUTS[6], &BTN_INPUTS[7]);
+    strcat(output, " RT: ");
+    tmp_string[0] = '\0';
+    sprintf(tmp_string, "0x%02x ", BTN_INPUTS[5]);
+    strcat(output, tmp_string);
+    strcat(output, " ");
+
+    for (int i=6; i<14; i++)
+    {
+    }
+    
+
     strcat(output, "LSX: ");
-    strcat(output, BTN_INPUTS[6]);
-    strcat(output, BTN_INPUTS[7]);
-    //Show2ByteOutput("Left stick y", &BTN_INPUTS[8], &BTN_INPUTS[9]);
+    tmp_string[0] = '\0';
+    sprintf(tmp_string, "0x%02x ", BTN_INPUTS[6]);
+    strcat(output, tmp_string);
+    sprintf(tmp_string, "0x%02x ", BTN_INPUTS[7]);
+    strcat(output, tmp_string);
+    strcat(output, " ");
+
     strcat(output, "LSY: ");
-    strcat(output, BTN_INPUTS[8]);
-    strcat(output, BTN_INPUTS[9]);
-    //Show2ByteOutput("Right stick x", &BTN_INPUTS[10], &BTN_INPUTS[11]);
+    tmp_string[0] = '\0';
+    sprintf(tmp_string, "0x%02x ", BTN_INPUTS[8]);
+    strcat(output, tmp_string);
+    sprintf(tmp_string, "0x%02x ", BTN_INPUTS[9]);
+    strcat(output, tmp_string);
+    strcat(output, " ");
+
     strcat(output, "RSX: ");
-    strcat(output, BTN_INPUTS[10]);
-    strcat(output, BTN_INPUTS[11]);
-    //Show2ByteOutput("Right stick y", &BTN_INPUTS[12], &BTN_INPUTS[13]);
+    tmp_string[0] = '\0';
+    sprintf(tmp_string, "0x%02x ", BTN_INPUTS[10]);
+    strcat(output, tmp_string);
+    sprintf(tmp_string, "0x%02x ", BTN_INPUTS[11]);
+    strcat(output, tmp_string);
+    strcat(output, " ");
+
     strcat(output, "RSY: ");
-    strcat(output, BTN_INPUTS[12]);
-    strcat(output, BTN_INPUTS[13]);
-    */
+    tmp_string[0] = '\0';
+    sprintf(tmp_string, "0x%02x ", BTN_INPUTS[12]);
+    strcat(output, tmp_string);
+    sprintf(tmp_string, "0x%02x ", BTN_INPUTS[13]);
+    strcat(output, tmp_string);
+    strcat(output, " ");
+
+    printf("size of output: %ld\n", (long)sizeof(output));
 
 }

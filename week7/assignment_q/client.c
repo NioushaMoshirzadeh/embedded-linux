@@ -7,7 +7,7 @@
 #include "libs/Auxiliary.h"
 #include "libs/CreateTCPClientSocket.h"
 
-#define MAX_MSG_SIZE 32
+#define MAX_MSG_SIZE 256
 
 int main (int argc, char *argv[])
 {
@@ -58,7 +58,7 @@ int main (int argc, char *argv[])
             }
 
             /* Wait for message from the server */
-            if (recv(sock, message, 32, 0) == -1)
+            if (recv(sock, message, MAX_MSG_SIZE, 0) == -1)
             {
                 printf("ERROR RECEIVING MESSAGE\n");
             }
