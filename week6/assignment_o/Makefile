@@ -2,12 +2,12 @@
 PROGRAM=main
 CC = gcc
 ACC = arm-linux-gcc
-FLAGS = -Wall -Werror -lpthread
+FLAGS = -Wall -Werror -lrt -lpthread
 DIR=builds/
 ####################################################################
 
 all: $(DIR)$(PROGRAM)
-	
+
 #compile
 $(DIR)$(PROGRAM).o: $(PROGRAM).c
 	$(CC) -c $^ -o $@ $(FLAGS)
@@ -18,6 +18,8 @@ $(DIR)$(PROGRAM): $(DIR)$(PROGRAM).o
 
 clean:
 	rm -rf $(DIR)*
+	rm /dev/shm/sem.sem1
+	rm /dev/shm/sem.sem2
 
 ####################################################################
 .PHONY: all upload clean

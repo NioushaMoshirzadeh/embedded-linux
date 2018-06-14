@@ -8,41 +8,56 @@
 
 /*#####################################################################*/
 
+#define TTY_PATH "/dev/pts/2"
+
+/*#####################################################################*/
+
 const char* SEM_ONE_NAME = "sem1";
 const char* SEM_TWO_NAME = "sem2";
 
 /*#####################################################################*/
 
-void wait(sem_t* sem);
-void post(sem_t* sem);
-void openOrCreate(sem_t* sem);
+void info(char* str);
+sem_t* openOrCreate(const char* name);
 
 /*#####################################################################*/
 
 int main()
 {
-    sem_t   sem_one = SEM_FAILED;
-    sem_t   sem_two = SEM_FAILED;
-    sem_t*  sem_one_ptr = &sem_one;
-    sem_t*  sem_two_ptr = &sem_two;
+    sem_t*   sem_one = SEM_FAILED;
+    sem_t*   sem_two = SEM_FAILED;
 
-    openOrCreate(sem_one_ptr);
-    openOrCreate(sem_two_ptr);
+    sem_one = openOrCreate(SEM_ONE_NAME);
+    sem_two = openOrCreate(SEM_TWO_NAME);
 
-    printf("Files opened, waiting ..\n");
+
+    if (sem_one == SEM_FAILED)
+    {
+        perror("sem 1 failed\n");
+        exit(-1);
+    }
+    if (sem_two == SEM_FAILED)
+    {
+        info("sem 2 failed\n");
+        exit(-1);
+    }
+
+    sem_wait(sem_one);
+    info("statment 1");
     sleep(3);
-    printf("Continuing..\n");
-    
-    sem_wait(sem_one_ptr);
-    printf("statement 1\n");
-    sem_post(sem_one_ptr);
+    sem_post(sem_one);
 
-    sem_wait(sem_one_ptr);
-    sem_post(sem_one_ptr);
+    sleep(3);
 
-    sem_wait(sem_two_ptr);
-    printf("statement 2\n");
-    sem_post(sem_two_ptr);
+    sem_wait(sem_two);
+    sem_wait(sem_one);
+    info("statement 2");
+    sleep(3);
+    sem_post(sem_one);
+    sem_post(sem_two);
+
+    sleep(5);
+    return 0;
 }
 
 /*#####################################################################*/
@@ -54,7 +69,7 @@ void wait(sem_t* sem)
     rtnval = sem_wait(sem);
     if (rtnval != 0)
     {
-        perror("ERROR: sem_wait() failed"); 
+        perror("ERROR: sem_wait() failed");
     }
 }
 
@@ -65,19 +80,21 @@ void post(sem_t* sem)
     rtnval = sem_post(sem);
     if (rtnval != 0)
     {
-        perror("ERROR: sem_post() failed"); 
+        perror("ERROR: sem_post() failed");
     }
 }
 
-void openOrCreate(sem_t* sem)
+sem_t* openOrCreate(const char* name)
 {
-    sem = sem_open(SEM_ONE_NAME, 0);
+    sem_t* sem = SEM_FAILED;
+
+    sem = sem_open(name, 0);
     if (sem == SEM_FAILED)
     {
         /* file doesn't exist */
         if (errno == ENOENT)
         {
-            sem = sem_open(SEM_ONE_NAME, O_CREAT | O_EXCL, 0600, 1);
+            sem = sem_open(name, O_CREAT | O_EXCL, 0600, 1);
             if (sem == SEM_FAILED)
             {
                 perror("ERROR: sem_open() failed to create");
@@ -89,4 +106,10 @@ void openOrCreate(sem_t* sem)
             perror( "ERROR: sem_open() failed to open");
         }
     }
+    return sem;
+}
+
+void info(char* str)
+{
+    printf("(%d) %s\n", getpid(), str);
 }
