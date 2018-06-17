@@ -42,7 +42,7 @@ int main (int argc, char * argv[])
     pthread_t thread_client;
 
     parse_args (argc, argv);
-    
+
     servSock = CreateTCPServerSocket (argv_port);
 
     /*
@@ -59,7 +59,7 @@ int main (int argc, char * argv[])
         /* Create thread to handle client */
         if (pthread_create(&thread_client, NULL, clientThread, (void *) (long) clientNumber) != 0)
         {
-            perror("Error creating thread"); 
+            perror("Error creating thread");
         }
         else
         {

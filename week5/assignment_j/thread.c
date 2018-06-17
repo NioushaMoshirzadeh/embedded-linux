@@ -27,7 +27,7 @@ my_thread_a (void * arg)
         usleep (s);
         printf ("%lx thread-a loop  i=%d\n", pthread_self(), i);
     }
-    
+
     printf ("%lx thread-a exit\n", pthread_self());
     return (NULL);
 }

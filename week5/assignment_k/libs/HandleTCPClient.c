@@ -26,8 +26,8 @@ void HandleTCPClient (int clntSocket)
     while (recvMsgSize > 0)      /* zero indicates end of transmission */
     {
         /* Print the received message */
-        printf("Received message: %s\n", echoBuffer);
-        
+        printf("%x Received message: %s\n", getpid(), echoBuffer);
+
         /* Convert chars from upper->lower case and vice versa */
         for (int i=0; i<recvMsgSize; i++)
         {
@@ -40,9 +40,9 @@ void HandleTCPClient (int clntSocket)
                 echoBuffer[i] = toupper(echoBuffer[i]);
             }
         }
-        
+
         delaying ();
-        
+
         /* Echo message back to client */
         if (send (clntSocket, echoBuffer, recvMsgSize, 0) != recvMsgSize)
         {

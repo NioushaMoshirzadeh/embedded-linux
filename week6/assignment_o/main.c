@@ -8,16 +8,25 @@
 
 /*#####################################################################*/
 
+/* Terminal to output to */
 #define TTY_PATH "/dev/pts/2"
 
 /*#####################################################################*/
 
+/* Semaphore names */
 const char* SEM_ONE_NAME = "sem1";
 const char* SEM_TWO_NAME = "sem2";
 
 /*#####################################################################*/
 
+/*
+ * Take str input and printf a message with the PID and str
+ */
 void info(char* str);
+
+/*
+ * Open a semaphore if it exists, or create it if it doesn't
+ */
 sem_t* openOrCreate(const char* name);
 
 /*#####################################################################*/
@@ -27,10 +36,9 @@ int main()
     sem_t*   sem_one = SEM_FAILED;
     sem_t*   sem_two = SEM_FAILED;
 
+    /* Create/Open semaphores */
     sem_one = openOrCreate(SEM_ONE_NAME);
     sem_two = openOrCreate(SEM_TWO_NAME);
-
-
     if (sem_one == SEM_FAILED)
     {
         perror("sem 1 failed\n");
@@ -42,6 +50,7 @@ int main()
         exit(-1);
     }
 
+    /* Print first statement when sem_one is available */
     sem_wait(sem_one);
     info("statment 1");
     sleep(3);
@@ -49,6 +58,11 @@ int main()
 
     sleep(3);
 
+    /*
+     * Print second statement when sem_two and sem_one is available
+     * sem_one again because we want the other programs to be finished
+     * with printing their first statement
+     */
     sem_wait(sem_two);
     sem_wait(sem_one);
     info("statement 2");
@@ -56,33 +70,20 @@ int main()
     sem_post(sem_one);
     sem_post(sem_two);
 
-    sleep(5);
+    sleep(3);
+
+    /*
+     * Wait till all programs have finished with their statement 2
+     * before ending the program
+     */
+    sem_wait(sem_two);
+    sem_wait(sem_one);
+    sem_post(sem_one);
+    sem_post(sem_two);
     return 0;
 }
 
 /*#####################################################################*/
-
-void wait(sem_t* sem)
-{
-    int rtnval;
-
-    rtnval = sem_wait(sem);
-    if (rtnval != 0)
-    {
-        perror("ERROR: sem_wait() failed");
-    }
-}
-
-void post(sem_t* sem)
-{
-    int rtnval;
-
-    rtnval = sem_post(sem);
-    if (rtnval != 0)
-    {
-        perror("ERROR: sem_post() failed");
-    }
-}
 
 sem_t* openOrCreate(const char* name)
 {

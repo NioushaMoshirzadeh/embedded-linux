@@ -2,8 +2,8 @@
 
 int main()
 {
-    /* numbers to print */
-    int numbers[3] = {1, 3, 5};
+    int numbers[3] = {1, 3, 5};     // numbers to print
+    char buffer[10];                // buffer for printing string
 
     /* Open or create shm file */
     connect();
@@ -16,7 +16,6 @@ int main()
     for (int i=0; i<3; i++)
     {
         claimShm();
-        char buffer[10];
         sprintf(buffer, "%d\n", numbers[i]);
         write(tty_fd, buffer, 2);
         releaseShm();

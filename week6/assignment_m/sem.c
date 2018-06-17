@@ -15,17 +15,17 @@
 #include <sys/stat.h>
 #include <sys/fcntl.h>
 
-static char * 
+static char *
 remove_nl (char * s)
 {
     int len;
-    
+
     len = strlen (s);
     if (s [len - 1] == '\n')
     {
         s [len - 1] = '\0';
     }
-    
+
     return (s);
 }
 
@@ -59,7 +59,7 @@ int main(void)
         fgets (line, sizeof (line), stdin);
         choice = line[0];
         printf ("\n");
-        
+
         switch (choice)
         {
             case 'n':
@@ -78,7 +78,7 @@ int main(void)
 
                 printf ("Calling sem_open('%s', O_CREAT | O_EXCL)\n", sem_name);
                 semdes = sem_open (sem_name, O_CREAT | O_EXCL, permissions, initialValue);
-                
+
                 if (semdes == SEM_FAILED)
                 {
                     perror ("ERROR: sem_open() failed");
@@ -97,7 +97,7 @@ int main(void)
 
                 printf ("Calling sem_open('%s',%#o)\n", sem_name,0);
                 semdes = sem_open (sem_name, 0);
-                
+
                 if (semdes == SEM_FAILED)
                 {
                     perror ("ERROR: sem_open() failed");
@@ -110,7 +110,7 @@ int main(void)
                     printf ("ERROR: no open semaphore\n");
                     break;
                 }
-                
+
                 printf ("Calling sem_close(%p)\n", semdes);
                 rtnval = sem_close (semdes);
                 if (rtnval != 0)
@@ -126,7 +126,7 @@ int main(void)
                     printf ("ERROR: no open semaphore\n");
                     break;
                 }
-                
+
                 printf ("Calling sem_post(%p)\n", semdes);
                 rtnval = sem_post (semdes);
                 if (rtnval != 0)
@@ -141,7 +141,7 @@ int main(void)
                     printf ("ERROR: no open semaphore\n");
                     break;
                 }
-                
+
                 printf ("Calling sem_trywait(%p)\n", semdes);
                 rtnval = sem_trywait (semdes);
                 if (rtnval != 0)
@@ -156,7 +156,7 @@ int main(void)
                     printf ("ERROR: no open semaphore\n");
                     break;
                 }
-                
+
                 printf ("Calling sem_wait(%p)\n", semdes);
                 rtnval = sem_wait (semdes);
                 if (rtnval != 0)

@@ -20,15 +20,18 @@ int main(int argc, char *argv[])
 
     servSock = CreateTCPServerSocket (argv_port);
 
-    while (to_quit == false)                /* run until someone indicates to quit... */
+    /*
+     * Main program loop
+     * wait for client to connect
+     * once connected, create new for to handle client
+    */
+    while (to_quit == false)
     {
-        //info_d("main program start", getpid());
-
+        /* Wait for client to connect */
         clntSock = AcceptTCPConnection (servSock);
 
+        /* Create fork */
         processID = fork();
-        //info_d("Forked", processID);
-
         if (processID < 0)
         {
             perror("fork() failed");
@@ -37,20 +40,20 @@ int main(int argc, char *argv[])
         else
         {
             /* Main program */
-            if (processID != 0)            
+            if (processID != 0)
             {
-                info_d("Main pid", getpid());
-                info_d("Main process", processID);
+                printf("%x Main program\n", getpid());
             }
+            /* Client program */
             else
             {
-                info_d("child process", getpid());
+                printf("%x Created child\n", getpid());
                 HandleTCPClient(clntSock);
             }
         }
 
     }
-    
+
     // server stops...
 	return (0);
 }

@@ -3,15 +3,15 @@
 #include <stdint.h>
 #include <string.h>
 #include <sys/mman.h>   // shm functions
-#include <sys/stat.h>   // mode constants  
-#include <sys/types.h>  // lseek 
-#include <fcntl.h>      // O mode constats 
+#include <sys/stat.h>   // mode constants
+#include <sys/types.h>  // lseek
+#include <fcntl.h>      // O mode constats
 #include <unistd.h>     // tty
 
 /*###################################################################*/
 
 /* Size to allocate for shm file */
-#define FILE_SIZE sizeof(uint8_t) 
+#define FILE_SIZE sizeof(uint8_t)
 
 /*###################################################################*/
 
@@ -28,23 +28,28 @@ const char* filename;   // shm file name
  * Create new shm file
  */
 char* createShm();
+
 /*
  * Open the shm file
  */
 char* openShm();
+
 /*
  * wait till the shm file is available, then claim it
  */
 void claimShm();
+
 /*
  * release the shm file
  */
 void releaseShm();
-/* 
+
+/*
  * Check if the shm file exists
  * if it doesn't create a new one, if it does open it
  */
 void connect();
+
 /*
  * unlink the shm file
  */

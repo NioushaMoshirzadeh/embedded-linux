@@ -21,7 +21,7 @@ int main (int argc, char *argv[])
     parse_args (argc, argv);
 
     sock = CreateTCPClientSocket (argv_ip, argv_port);
-        
+
     for (i = 0; i < argv_nrofdata; i++)
     {
         echoString = argv_data [i];
@@ -29,13 +29,13 @@ int main (int argc, char *argv[])
         /* Determine input length */
 
         delaying();
-        
+
         /* Send string to the server */
         send(sock, echoString, echoStringLen, 0);
 
         /* Display transmitted string in verbose mode */
         info_s("Sent string", echoString);
-        
+
         /* Display receive and converted string from server */
         bytesRcvd = recv(sock, echoBuffer, RCVBUFSIZE, 0);
         printf("Received bytes: %d\nReceived message: %s\n", bytesRcvd, echoBuffer);

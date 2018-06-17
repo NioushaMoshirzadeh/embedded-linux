@@ -7,7 +7,7 @@ FLAGS = -Wall -Werror -lrt
 DIR_BUILD = builds/
 ####################################################################
 
-all: $(DIR_BUILD)$(PROGRAM_TWO) $(DIR_BUILD)$(PROGRAM_ONE) 
+all: $(DIR_BUILD)$(PROGRAM_TWO) $(DIR_BUILD)$(PROGRAM_ONE)
 
 ####################################################################
 

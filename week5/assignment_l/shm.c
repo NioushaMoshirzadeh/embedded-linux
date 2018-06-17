@@ -20,7 +20,7 @@ char* createShm()
     }
 
     /* map file into memory */
-    addr = (char*) mmap(NULL, FILE_SIZE, PROT_READ|PROT_WRITE, 
+    addr = (char*) mmap(NULL, FILE_SIZE, PROT_READ|PROT_WRITE,
                             MAP_SHARED, shm_fd, 0);
     if (addr == MAP_FAILED)
     {
@@ -34,24 +34,24 @@ char* openShm ()
 {
     int     size; // size of file in bytes
     char*   addr;
-    
+
     shm_fd = shm_open(filename, O_RDWR, 0600);
     if (shm_fd == -1)
     {
         return "FILE NOT FOUND";
     }
-                
+
     /* Find file size */
     size = lseek(shm_fd, 0, SEEK_END);
     printf ("lseek() returned %d\n", size);
-                
-    addr = (char *) mmap (NULL, size, PROT_READ | PROT_WRITE, 
+
+    addr = (char *) mmap (NULL, size, PROT_READ | PROT_WRITE,
                                 MAP_SHARED, shm_fd, 0);
     if (addr == MAP_FAILED)
     {
         perror ("ERROR: mmap() failed");
     }
-    
+
     return (addr);
 }
 
@@ -76,7 +76,7 @@ void releaseShm()
 void connect()
 {
     /* initialize */
-    shm_fd      = -1; 
+    shm_fd      = -1;
     tty_name    = "/dev/pts/2";
     tty_fd      = -1;
     shm_addr    = "FILE NOT FOUND";
