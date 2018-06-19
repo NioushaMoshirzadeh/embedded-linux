@@ -2,19 +2,19 @@
 
 unsigned char BTN_INPUTS[] = {0, 34, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 unsigned char RUMBLE_ON[]   = {0, 8, 0, 0x88, 0x88, 0, 0, 0};
-unsigned char RUMBLE_OFF[]  = {0, 8, 0, 0x00, 0x00, 0, 0, 0}; 
+unsigned char RUMBLE_OFF[]  = {0, 8, 0, 0x00, 0x00, 0, 0, 0};
 unsigned char LED_ALL_ON[]  = {0x01, 0x03, 0x01};
 unsigned char LED_ALL_OFF[] = {0x01, 0x03, 0x00};
 
 INPUT_STRUCT input_two = {
     2, 8, {0, 1, 2, 3, 4, 5, 6, 7},
-    {"DPAD UP", "DPAD DOWN", "DPAD LEFT", "DPAF RIGHT", 
+    {"DPAD UP", "DPAD DOWN", "DPAD LEFT", "DPAF RIGHT",
     "START", "BACK", "L stick", "R stick"}
 };
 INPUT_STRUCT input_three = {
-    3, 7, {0, 1, 2, 4, 5, 6, 7}, 
+    3, 7, {0, 1, 2, 4, 5, 6, 7},
     {"LB", "RB", "XBOX", "A", "B", "X", "Y"}
-}; 
+};
 
 /*
  * Array for easy iteration over all buttons
@@ -42,7 +42,7 @@ int sendCommand(libusb_device_handle* h, unsigned char* arr, int len)
     int error, transferred;
     error = libusb_interrupt_transfer(
         h, OUTPUT, arr, len, &transferred, 0
-        ); 
+        );
     if (error != 0)
     {
         perror("ERROR: libusb_interrupt_transfer failed");

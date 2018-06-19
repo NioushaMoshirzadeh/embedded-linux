@@ -31,12 +31,10 @@ int main(int argc, char *argv[])
 
     while (to_quit == false)                /* run until someone indicates to quit... */
     {
-        //info_d("main program start", getpid());
 
         clntSock = AcceptTCPConnection (servSock);
 
         processID = fork();
-        //info_d("Forked", processID);
 
         if (processID < 0)
         {
@@ -46,7 +44,7 @@ int main(int argc, char *argv[])
         else
         {
             /* Main program */
-            if (processID != 0)            
+            if (processID != 0)
             {
                 info_d("Main pid", getpid());
                 info_d("Main process", processID);

@@ -37,18 +37,18 @@ delaying (void)
     }
 }
 
-char * 
+char *
 remove_nl (char * s)
 {
     // remove the trailing nerwline in 's' (if present)
     int len;
-    
+
     len = strlen (s);
     if (s [len - 1] == '\n')
     {
         s [len - 1] = '\0';
     }
-    
+
     return (s);
 }
 
@@ -63,7 +63,7 @@ void
 info_set_tty (const char * name)
 {
     char s[80];
-    
+
     tty_fptr = fopen (name, "w");
     if (tty_fptr == NULL)
     {
@@ -72,12 +72,12 @@ info_set_tty (const char * name)
     }
 }
 
-void 
+void
 info_set_local_peer (int sock)
 {
     unsigned int        len;
     struct sockaddr_in  a;
-    
+
     len = sizeof(a);
     if (getsockname(sock, (struct sockaddr *) &a, &len) != 0)
     {
@@ -90,9 +90,9 @@ info_set_local_peer (int sock)
         printf ("    addr:   %s\n", inet_ntoa(a.sin_addr));
         printf ("    port:   %d\n", ntohl (a.sin_port));
     }
-    
+
     sprintf (local_prefix, "LOCAL %s(%05d)", inet_ntoa(a.sin_addr), ntohl (a.sin_port));
-    
+
     len = sizeof(a);
     if (getpeername(sock, (struct sockaddr *) &a, &len) != 0)
     {
@@ -131,15 +131,15 @@ info_user (const char * prefix, const char * s)
 {
     struct tm   ti;
     time_t      t;
-    
+
     if (tty_fptr == NULL)
     {
         tty_fptr = stdout;
     }
-    
+
     if (argv_userprefix == true)
     {
-        
+
         if (time (&t) == -1)
         {
             DieWithError ("time()");
@@ -148,23 +148,23 @@ info_user (const char * prefix, const char * s)
         {
             DieWithError ("localtime()");
         }
-        
+
         fprintf (tty_fptr, "%02d:%02d:%02d %s:> ",
-            ti.tm_hour, 
-            ti.tm_min, 
-            ti.tm_sec, 
+            ti.tm_hour,
+            ti.tm_min,
+            ti.tm_sec,
             prefix);
     }
     fprintf (tty_fptr, "%s", s);
 }
 
-void 
+void
 info_local (const char * s)
 {
     info_user (local_prefix, s);
 }
 
-void 
+void
 info_peer (const char * s)
 {
     info_user (peer_prefix, s);
@@ -174,7 +174,7 @@ void
 info_d (const char * s, int i)
 {
     char    str[80];
-    
+
     sprintf (str, "%s: %d", s, i);
     info (str);
 }
@@ -182,8 +182,8 @@ info_d (const char * s, int i)
 void
 info_x (const char * s, unsigned int i)
 {
-    char    str[80];
-    
+    char str[80];
+
     sprintf (str, "%s: %x", s, i);
     info (str);
 }
@@ -192,7 +192,7 @@ void
 info_s (const char * s, const char * i)
 {
     char    str[80];
-    
+
     sprintf (str, "%s '%s'", s, i);
     info (str);
 }
@@ -201,7 +201,7 @@ void parse_args (int argc, char *argv[])
 {
     int opt;
     int i;
-    
+
     while ((opt = getopt(argc, argv, "i:t:p:y:f:uvdgh")) != -1)
     {
         switch (opt)

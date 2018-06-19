@@ -7,12 +7,12 @@
 #include "libs/Auxiliary.h"
 #include "libs/CreateTCPClientSocket.h"
 
-#define MAX_MSG_SIZE 256
+#define MAX_MSG_SIZE 255
 
 int main (int argc, char *argv[])
 {
     int         sock;                   /* Socket descriptor */
-    int         running = 1; 
+    int         running = 1;
     char        message[MAX_MSG_SIZE];
 
     /* parse command line arguments */
