@@ -1,223 +1,222 @@
 #include <stdio.h>      // printf
 #include <stdlib.h>     // exit, atoi
+#include <string.h>
 #include <unistd.h>     // getopt, sleep
 #include <fcntl.h>      // open, close
 #include <semaphore.h>
+#include <errno.h>
 
 /*##############################################################*/
 
 #define TTY_PATH "/dev/pts/3"       // terminal
 
 /*##############################################################*/
-
-int program;                // only program 0 creates/deletes the file
-const int numbers[8] = {1, 2, 3, 4, 5, 6, 7, 8}; // numbers to print
-int numbers[2];
-int number_index;
-int tty_fd;                             // terminal file descriptor
-//const char* sem_name = "ASSIGNMENT_N";  // semaphore file name
-const char* sem_a_name = "SEM_A";
-const char* sem_b_name = "SEM_B";
-const char* sem_c_name = "SEM_C";
-const char* sem_d_name = "SEM_D";
-char* sem_name;
+int program;
+int tty_fd;
+char* sem_names[8] = {
+    "SEM_1", "SEM_2", "SEM_3", "SEM_4",
+    "SEM_5", "SEM_6", "SEM_7", "SEM_8"
+};
+/*
+ * Each program uses 4 semaphores, 2 to let other programs know when
+ * it's finished with a task and 2 to check whether another program
+ * has finished its task
+ * the indexes are (0, 1) for other and (2, 3) for own
+ */
+sem_t* sems[4] = {SEM_FAILED, SEM_FAILED, SEM_FAILED, SEM_FAILED};
+int indexes[4];
+char* messages[8] = {
+    "1\n", "2\n", "3\n", "4\n",
+    "5\n", "6\n", "7\n", "8\n"
+};
 
 /*##############################################################*/
-
-/*
- * Parse command line arguments, returns -1 on error
- * expected format is -p <program>
- * <program>: A, B, C or D
- */
-int parseArgs(int argc, char** argv);
-void initialize(void);
+void parseArgs(int argc, char** argv);
+void setIndexes(void);
+void createOrOpenSemaphores(void);
+void wait(int action);
+void post(int action);
+void closeSemaphores(void);
 
 /*##############################################################*/
 
 int main(int argc, char** argv)
 {
-    int rtnval;                 // return values from function calls
-    int value = 0;              // semaphore value
-    char buffer[5];             // hold number to print as string
-    sem_t* sem_a = SEM_FAILED;    // semaphore
-    sem_t* sem_b = SEM_FAILED;    // semaphore
-    sem_t* sem_c = SEM_FAILED;    // semaphore
-    sem_t* sem_d = SEM_FAILED;    // semaphore
+    // parse arguments
+    printf("Parsing arguments...\n");
+    parseArgs(argc, argv);
 
-    /* Parse arguments */
-    rtnval = parseArgs(argc, argv);
-    if (rtnval < 0)
-    {
-        exit(-1);
-    }
+    // create/open semaphores
+    printf("Setting indexes...\n");
+    setIndexes();
+    printf("Creating semaphores...\n");
+    createOrOpenSemaphores();
 
-    /* Give time for other programs to start */
-
-    /* Setup terminal */
+    // connect tty
+    printf("Connecting to terminal...\n");
     tty_fd = open(TTY_PATH, O_RDWR);
-    if (tty_fd < 0)
-    {
-        printf("Error finding terminal\n");
-        exit(-1);
-    }
 
-    /* Create or open semaphore file */
-    if (program == 0)
-    {
-        sem_a = sem_open(sem_a_name, O_CREAT | O_EXCL, 0600, 1);
-        sem_b = sem_open(sem_b_name, O_CREAT | O_EXCL, 0600, 1);
-        sem_c = sem_open(sem_c_name, O_CREAT | O_EXCL, 0600, 1);
-        sem_d = sem_open(sem_d_name, O_CREAT | O_EXCL, 0600, 1);
-    }
-    else
-    {
-        sem_a = sem_open(sem_a_name, 0);
-        sem_b = sem_open(sem_b_name, 0);
-        sem_c = sem_open(sem_c_name, 0);
-        sem_d = sem_open(sem_d_name, 0);
-    }
+    //sleep(5);
+    // wait and print numbers
+    wait(1);
+    write(tty_fd, messages[indexes[2]], strlen(messages[indexes[2]]));
+    post(1);
+    wait(2);
+    write(tty_fd, messages[indexes[3]], strlen(messages[indexes[3]]));
+    post(2);
 
-    /* Print numbers to terminal with delay between numbers */
-    for (int i=0; i<2; i++)
-    {
-        rtnval = sem_wait(sem_a);
-        rtnval = sem_wait(sem_b);
-        rtnval = sem_wait(sem_c);
-        rtnval = sem_wait(sem_d);
-        if (rtnval != 0)
-        {
-            printf("sem_wait() failed\n");
-        }
+    closeSemaphores();
 
-        sprintf(buffer, "%d\n", numbers[number_index]);
-        write(tty_fd, buffer, 2);
-        number_index += 4;
+    unlinkSemaphores();
 
-        rtnval = sem_post(sem_d);
-        rtnval = sem_post(sem_c);
-        rtnval = sem_post(sem_b);
-        rtnval = sem_post(sem_a);
-        if (rtnval != 0)
-        {
-            printf("sem_post() failed\n");
-        }
-        sleep(5);
-    }
-
-    /* if it's not the main program just end */
-    if (program != 0)
-    {
-        close(tty_fd);
-        exit(0);
-    }
-
-    /* main program waits till semaphore other programs finish then ends */
-    while (value != 1)
-    {
-        rtnval = sem_getvalue(sem_d, &value);
-        if (rtnval != 0)
-        {
-            printf("sem_getvalue() failed\n");
-        }
-        sleep(1);
-    }
-
-    rtnval = sem_close(sem_d);
-    rtnval = sem_close(sem_c);
-    rtnval = sem_close(sem_b);
-    rtnval = sem_close(sem_a);
-    if (rtnval != 0)
-    {
-        printf("sem_close() failed\n");
-    }
-
-    rtnval = sem_unlink(sem_a_name);
-    rtnval = sem_unlink(sem_b_name);
-    rtnval = sem_unlink(sem_c_name);
-    rtnval = sem_unlink(sem_d_name);
-    if (rtnval != 0)
-    {
-        printf("sem_unlink() failed\n");
-    }
-
+    // disconnect tty
     close(tty_fd);
-
-    return 0;
-
+    sleep(5);
 }
 
 /*##############################################################*/
 
-int parseArgs(int argc, char** argv)
+void parseArgs(int argc, char** argv)
 {
     int opt;
-
     if (argc < 2)
     {
-        printf("Missing required argument -p\n");
-        return -1;
+        perror("Missing required argument -p");
     }
 
-    while((opt = getopt(argc, argv, "p:")) != -1)
+    while ((opt = getopt(argc, argv, "p:")) != -1)
     {
-        switch(opt)
+        if (opt == 'p')
         {
-            case 'p':
-                switch (optarg[0])
-                {
-                    case 'A':
-                        number_index = 0;
-                        program = 0;
-                        sem_name = (char *) sem_a_name;
-                        break;
-                    case 'B':
-                        number_index = 1;
-                        program = 1;
-                        sem_name = (char *) sem_b_name;
-                        break;
-                    case 'C':
-                        number_index = 2;
-                        program = 2;
-                        sem_name = (char *) sem_c_name;
-                        break;
-                    case 'D':
-                        number_index = 3;
-                        program = 3;
-                        sem_name = (char *) sem_d_name;
-                        break;
-                    default:
-                        printf("invalid argument\n");
-                        return -1;
-                        break;
-                }
-                break;
-            case '?':
-                return -1;
-                break;
-            default:
-                return -1;
-                break;
+            switch (optarg[0])
+            {
+                case 'A':
+                    program = 0;
+                    break;
+                case 'B':
+                    program = 1;
+                    break;
+                case 'C':
+                    program = 2;
+                    break;
+                case 'D':
+                    program = 3;
+                    break;
+                default:
+                    perror("Invalid argument");
+                    break;
+            }
         }
-    }
 
-    return 0;
+    }
 }
 
-void initialize()
+void setIndexes()
 {
     switch (program)
     {
         case 0:
-            numbers = {1, 5};
+            indexes[0] = -1;
+            indexes[1] = 3;
+            indexes[2] = 0;
+            indexes[3] = 4;
             break;
         case 1:
-            numbers = {2, 6};
+            indexes[0] = 0;
+            indexes[1] = 4;
+            indexes[2] = 1;
+            indexes[3] = 5;
             break;
         case 2:
-            numbers = {3, 7};
+            indexes[0] = 1;
+            indexes[1] = 5;
+            indexes[2] = 2;
+            indexes[3] = 6;
             break;
         case 3:
-            numbers = {4, 8};
+            indexes[0] = 2;
+            indexes[1] = 6;
+            indexes[2] = 3;
+            indexes[3] = 7;
             break;
     }
+}
+
+void createOrOpenSemaphores()
+{
+    int i;
+    for (int j=0; j<sizeof(indexes)/sizeof(int); j++)
+    {
+        i = indexes[j];
+        if (i != -1)
+        {
+            sems[j] = sem_open(sem_names[i], O_CREAT|O_EXCL, 0600, 1);
+            /* error 17 if file already exists */
+            if (errno == 17)
+            {
+                sems[j] = sem_open(sem_names[i], 0);
+                errno = 0;
+            }
+        }
+    }
+}
+
+void wait(int action)
+{
+    if (action == 1)
+    {
+        sem_wait(sems[2]);
+        sleep(5);
+        if (sems[0] != SEM_FAILED)
+        {
+            sem_wait(sems[0]);
+            sleep(3);
+        }
+
+
+    }
+    else
+    {
+        sem_wait(sems[3]);
+        sleep(3);
+        sem_wait(sems[1]);
+        sleep(3);
+        
+    }
+
+}
+
+void post(int action)
+{
+    if (action == 1)
+    {
+        sem_post(sems[2]);
+        sleep(3);
+        if (sems[0] != SEM_FAILED)
+        {
+            sem_post(sems[0]);
+            sleep(3);
+        }
+    }
+    else
+    {
+        sem_post(sems[3]);
+        sleep(3);
+        sem_post(sems[1]);
+        sleep(3);
+        
+    }
+
+}
+
+void closeSemaphores(void)
+{
+    sem_close(sems[2]);
+    sem_close(sems[3]);
+}
+
+void unlinkSemaphores(void)
+{
+    sem_unlink(sem_names[indexes[2]]);
+    sem_unlink(sem_names[indexes[3]]);
 }
