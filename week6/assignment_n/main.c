@@ -37,6 +37,8 @@ void createOrOpenSemaphores(void);
 void wait(int action);
 void post(int action);
 void closeSemaphores(void);
+void closeSemaphores(void);
+void unlinkSemaphores(void);
 
 /*##############################################################*/
 
@@ -181,7 +183,6 @@ void wait(int action)
         sleep(3);
         sem_wait(sems[1]);
         sleep(3);
-        
     }
 
 }
@@ -204,7 +205,6 @@ void post(int action)
         sleep(3);
         sem_post(sems[1]);
         sleep(3);
-        
     }
 
 }
