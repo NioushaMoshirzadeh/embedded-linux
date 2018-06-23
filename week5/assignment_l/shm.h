@@ -35,14 +35,14 @@ char* createShm();
 char* openShm();
 
 /*
- * wait till the shm file is available, then claim it
+ * wait till shm has num value
  */
-void claimShm();
+void waitShm(int num);
 
 /*
- * release the shm file
+ * write num to shm
  */
-void releaseShm();
+void setShm(int num);
 
 /*
  * Check if the shm file exists

@@ -15,10 +15,10 @@ int main()
     /* print every number to terminal */
     for (int i=0; i<3; i++)
     {
-        claimShm();
+        waitShm(numbers[i] - 1);
         sprintf(buffer, "%d\n", numbers[i]);
         write(tty_fd, buffer, 2);
-        releaseShm();
+        setShm(numbers[i]);
     }
 
     /* Close shared memory and terminal */

@@ -55,21 +55,19 @@ char* openShm ()
     return (addr);
 }
 
-void claimShm()
+void waitShm(int num)
 {
     /* Wait till file is available */
-    while (shm_addr[0] != 0)
+    while (shm_addr[0] != num)
     {
         sleep(1);
     }
-    /* claim file */
-    shm_addr[0] = 1;
 }
 
-void releaseShm()
+void setShm(int num)
 {
     /* release file */
-    shm_addr[0] = 0;
+    shm_addr[0] = num;
     sleep(5);
 }
 
@@ -77,7 +75,7 @@ void connect()
 {
     /* initialize */
     shm_fd      = -1;
-    tty_name    = "/dev/pts/2";
+    tty_name    = "/dev/pts/3";
     tty_fd      = -1;
     shm_addr    = "FILE NOT FOUND";
     filename    = "assignmentd";
