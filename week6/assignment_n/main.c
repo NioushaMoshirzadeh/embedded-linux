@@ -8,11 +8,12 @@
 
 /*##############################################################*/
 
-#define TTY_PATH "/dev/pts/3"       // terminal
+#define TTY_PATH "/dev/pts/3"       // terminal name
 
 /*##############################################################*/
-int program;
-int tty_fd;
+int program;        // program id
+int tty_fd;         // terminal file descriptor
+/* Names of all semaphores */
 char* sem_names[8] = {
     "SEM_1", "SEM_2", "SEM_3", "SEM_4",
     "SEM_5", "SEM_6", "SEM_7", "SEM_8"
@@ -24,42 +25,72 @@ char* sem_names[8] = {
  * the indexes are (0, 1) for other and (2, 3) for own
  */
 sem_t* sems[4] = {SEM_FAILED, SEM_FAILED, SEM_FAILED, SEM_FAILED};
+/* indexes for names/messages correspondin to sems */
 int indexes[4];
+/* messages to be sent */
 char* messages[8] = {
     "1\n", "2\n", "3\n", "4\n",
     "5\n", "6\n", "7\n", "8\n"
 };
 
 /*##############################################################*/
+
+/*
+ * Check command line arguments and set program id
+ */
 void parseArgs(int argc, char** argv);
+
+/*
+ * Set indexes depending on program id
+ */
 void setIndexes(void);
+
+/*
+ * Attempt to create all 4 semaphores for this program
+ * If semaphore already exists, open it instead
+ * semaphores are stored in sems array
+ */
 void createOrOpenSemaphores(void);
+
+/*
+ * Wait for semaphores for either first or second action
+ */
 void wait(int action);
+
+/*
+ * Post semsphores from first or second action
+ */
 void post(int action);
+
+/*
+ * Close semaphores which this program owns
+ */
 void closeSemaphores(void);
-void closeSemaphores(void);
+
+/*
+ * Unlink semaphores which this program owns
+ */
 void unlinkSemaphores(void);
 
 /*##############################################################*/
 
 int main(int argc, char** argv)
 {
-    // parse arguments
+    /* parse arguments */
     printf("Parsing arguments...\n");
     parseArgs(argc, argv);
 
-    // create/open semaphores
+    /* create/open semaphores */
     printf("Setting indexes...\n");
     setIndexes();
     printf("Creating semaphores...\n");
     createOrOpenSemaphores();
 
-    // connect tty
+    /* connect tty */
     printf("Connecting to terminal...\n");
     tty_fd = open(TTY_PATH, O_RDWR);
 
-    //sleep(5);
-    // wait and print numbers
+    /* print numbers */
     wait(1);
     write(tty_fd, messages[indexes[2]], strlen(messages[indexes[2]]));
     post(1);
@@ -67,12 +98,16 @@ int main(int argc, char** argv)
     write(tty_fd, messages[indexes[3]], strlen(messages[indexes[3]]));
     post(2);
 
+    /* end program */
     closeSemaphores();
-
     unlinkSemaphores();
-
-    // disconnect tty
     close(tty_fd);
+
+    /*
+     * Give other programs time to finish other wise terminal
+     * which is printing the messages might end before the last
+     * program has finished printing
+     */
     sleep(5);
 }
 
